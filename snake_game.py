@@ -2,41 +2,88 @@
 # Email    : sthirakala@umass.edu
 # Spire ID : 34692111
 
-import time 
-import random
 import pygame
+import time
+import random
 
-s_speed = 100
 
-window_x = 1000
-window_y = 1000
+pygame.init()
 
-black = pygame.Color(0,0,0)
-white = pygame.Color(255,255,255)
-green = pygame.Color(0,255,0)
-blue = pygame.Color(0,0,255)
-red = pygame.Color(255,0,0)
 
-scoreboard = {}
+def get_user_settings():
+    print("Welcome to the Snake Game!")
+    print("Please input the following settings:")
 
-def add_player(player_name):
-    scoreboard[player_name] = 0
+  
+    width = int(input("Enter width of the game window: "))
+    height = int(input("Enter height of the game window: "))
+    
+    snake_speed = int(input("Enter snake speed: "))
+    
+    
+    available_colors = {
+        "red": (255, 0, 0),
+        "yellow": (255, 255, 0),
+        "orange": (255, 165, 0),
+        "green": (144, 238, 144),
+        "blue": (0, 0, 255),
+        "pink": (255, 192, 203),
+        "purple": (128, 0, 128),
+        "brown": (137, 81, 41), 
+        "black": (0,0,0),
+        "white": (255, 255, 255)
+    }
+    print("Choose a color for the snake: red, yellow, orange, green, blue, pink, purple, brown, black, white")
+    snake_color_input = input("Enter snake color: ").strip().lower()
+    snake_color = available_colors.get(snake_color_input, (0, 255, 0)) 
 
-def update_score(player_name, score):
-    if player_name in scoreboard:
-        scoreboard[player_name] += score
-    else:
-        print("Player not found.")
+    
+    print("Choose a color for the fruit: red, yellow, orange, green, blue, pink, purple, brown, black, white")
+    fruit_color_input = input("Enter fruit color: ").strip().lower()
+    fruit_color = available_colors.get(fruit_color_input, (255, 0, 0)) 
 
-def display_scoreboard():
-    print("Scoreboard:")
-    for player, score in scoreboard.items():
-        print(f"{player}: {score}")
+    return {
+        "width": width,
+        "height": height,
+        "snake_color": snake_color,
+        "fruit_color": fruit_color,
+        "snake_speed": snake_speed
+    }
 
-#Example 
-add_player("player1")
+class Settings:
+    def __init__(self, width=600, height=400, snake_color=(0, 255, 0), fruit_color=(255, 0, 0), snake_speed=15):
+        self.width = width
+        self.height = height
+        self.snake_color = snake_color
+        self.fruit_color = fruit_color
+        self.snake_speed = snake_speed
 
-update_score("player1", 10)
-update_score("player1", 15)
 
-display_scoreboard() 
+class Game:
+    def __init__(self, settings):
+        self.settings = settings
+        self.game_over = False
+        self.game_close = False
+
+     
+        self.game_display = pygame.display.set_mode((self.settings.width, self.settings.height))
+        pygame.display.set_caption('Snake Game')
+
+      
+        self.snake_block = 10
+        self.snake_List = []
+        self.snake_Head = []
+        self.Length_of_snake = 1
+
+    
+        self.clock = pygame.time.Clock()
+
+    
+        self.font_style = pygame.font.SysFont("arial", 25)
+        self.score_font = pygame.font.SysFont("arial", 35)
+
+   
+    def Your_score(self, score):
+        value = self.score_font.render("Your Score: " + str(score), True, (0, 0, 0))
+        self.game_display.blit(value, [0, 0])
+
